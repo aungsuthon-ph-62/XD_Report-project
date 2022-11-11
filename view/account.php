@@ -25,9 +25,15 @@ $user = mysqli_fetch_assoc($result);
 
 
                 </h1>
-                <div class="px-5 rounded-circle">
-                    <img src="../img/profilePic/user.png" class="img-fluid" alt="Avatar,XD_Report">
-                </div>
+                <?php if (!$user['u_img']) { ?>
+                    <div class="px-5 rounded-circle">
+                        <img src="../img/profilePic/user.png" class="img-fluid" alt="Avatar,XD_Report">
+                    </div>
+                <?php } else { ?>
+                    <div class="px-5 rounded-circle">
+                        <img src="../img/profilePic/<?= $user['img'] ?>" class="img-fluid" alt="Avatar,XD_Report">
+                    </div>
+                <?php } ?>
             </div>
 
             <div class="p-md-3">
@@ -63,7 +69,7 @@ $user = mysqli_fetch_assoc($result);
             </div>
 
             <hr class="border border-light border-2 rounded-pill mb-3">
-        
+
             <a href="php/action.php?logout" class="btn btn-outline-danger mt-3 login-hover">ออกจากระบบ</a>
 
 
@@ -77,9 +83,15 @@ $user = mysqli_fetch_assoc($result);
 
 
                 </h1>
-                <div class="px-5 rounded-circle">
-                    <img src="../img/profilePic/user.png" class="img-fluid" alt="Avatar,XD_Report">
-                </div>
+                <?php if (!$user['u_img']) { ?>
+                    <div class="px-5 rounded-circle">
+                        <img src="../img/profilePic/user.png" class="img-fluid" alt="Avatar,XD_Report">
+                    </div>
+                <?php } else { ?>
+                    <div class="px-5 rounded-circle">
+                        <img src="../img/profilePic/<?= $user['img'] ?>" class="img-fluid" alt="Avatar,XD_Report">
+                    </div>
+                <?php } ?>
             </div>
 
             <div class="p-md-5 my-3">
@@ -124,7 +136,7 @@ $user = mysqli_fetch_assoc($result);
         <div class="col-12 col-md-8 p-5 bg-white rounded">
             <div class="p-md-5">
                 <h2>
-                <i class="fa-solid fa-box-open"></i> รายการของท่าน :
+                    <i class="fa-solid fa-box-open"></i> รายการของท่าน :
                 </h2>
             </div>
             
