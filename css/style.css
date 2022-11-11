@@ -1,0 +1,29 @@
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #3f3b6c;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(
+    to right,
+    rgb(63, 59, 108),
+    rgb(98, 79, 130)
+  );
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgb(63, 59, 108), rgb(98, 79, 130));
+}
+
+.login-hover:hover {
+  /* fallback for old browsers */
+  background: #3f3b6c;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(
+    to right,
+    rgb(63, 59, 108),
+    rgb(98, 79, 130)
+  );
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgb(63, 59, 108), rgb(98, 79, 130));
+}
