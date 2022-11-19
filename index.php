@@ -32,34 +32,85 @@ include 'layout/m_nav.php';
     <?php if (!$_SESSION['id']) {
         if (isset($_GET['p'])) {
             $p = $_GET['p'];
-            switch ($p) {
-                case "sign-in":
-                    include 'view/sign-in.php';
-                    break;
-                case "sign-up":
-                    include 'view/sign-up.php';
-                    break;
-                case "account":
-                    if (isset($_SESSION['id'])) {
-                        if (!$_SESSION['id']) {
-                            $_SESSION['error'] = "กรุณาเข้าสู่ระบบก่อน!";
-                            header("Location: ../index.php?p=sign-in");
-                            exit;
-                        } else {
-                            include 'view/account.php';
-                        }
-                    }
-                default:
-                    include 'view/index.php';
+            if ($p) {
+                switch ($p) {
+                    case "sign-in":
+                        require_once 'view/sign-in.php';
+                        break;
+                    case "sign-up":
+                        require_once 'view/sign-up.php';
+                        break;
+                    default:
+                        require_once 'view/index.php';
+                }
+            } else {
+                require_once 'view/index.php';
             }
         } else {
-            include 'view/index.php';
+            require_once 'view/index.php';
         }
-    } elseif (isset($_GET['report'])) {
-        include 'view/index.php';
     } else {
-        include 'view/account.php';
+        if ($_SESSION['role'] == 'Member') {
+            if (isset($_GET['p'])) {
+                $p = $_GET['p'];
+                if ($p) {
+                    switch ($p) {
+                        case "report":
+                            require_once 'view/index.php';
+                            break;
+                        case "status":
+                            require_once 'view/status.php';
+                            break;
+                        default:
+                            require_once 'view/account.php';
+                    }
+                } else {
+                    require_once 'view/account.php';
+
+                }
+            } elseif (isset($_GET['status'])) {
+                require_once 'view/status.php';
+            } else {
+                require_once 'view/account.php';
+            }
+        } elseif ($_SESSION['role'] == 'Admin') {
+            if (isset($_GET['p'])) {
+                $p = $_GET['p'];
+                if ($p) {
+                    switch ($p) {
+                        case "report":
+                            require_once 'view/index.php';
+                            break;
+                        default:
+                            require_once 'view/admin.php';
+                    }
+                } else {
+                    require_once 'view/admin.php';
+
+                }
+            } elseif (isset($_GET['view'])) {
+                require_once 'view/editReport.php';
+            } else {
+                require_once 'view/admin.php';
+            }
+        }
     } ?>
+
+    <!-- Data table -->
+    <script>
+        $(document).ready(function() {
+            $('#reportTable').DataTable();
+
+            var table = $('#reportTable').DataTable();
+
+            // #myInput is a <input type="text"> element
+            $('#myInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+        });
+    </script>
+    <!-- Data table -->
+
     <?php
     include 'php/alert.php';
     include "layout/footer.php";

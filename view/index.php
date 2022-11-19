@@ -30,24 +30,17 @@ $user = mysqli_fetch_assoc($result);
 
             <div class="p-md-5 mb-3">
 
-                <div class="px-5 p-md-0 mb-3 d-none d-md-block">
-
-                    <h5>
-
-                        ติดตามสถานะ <i class="fa-solid fa-circle-info"></i>
-
-                    </h5>
-
-                    <p>
-
-                        สามารถคลิ๊กที่ปุ่มด้านล่างเพื่อติดตามสถานะร้องเรียนหรือสามารถเข้าสู่ระบบเพื่อเช็คสถานะร้องเรียน
-
-                    </p>
-
-                    <button id="btnStatus" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#chkStatusModal">ติดตามสถานะ</button>
-
-                </div>
-
+                <?php if (!$_SESSION['id']) { ?>
+                    <div class="px-5 p-md-0 mb-3 d-none d-md-block">
+                        <h5>
+                            ติดตามสถานะ <i class="fa-solid fa-circle-info"></i>
+                        </h5>
+                        <p>
+                            สามารถคลิ๊กที่ปุ่มด้านล่างเพื่อติดตามสถานะร้องเรียนหรือสามารถเข้าสู่ระบบเพื่อเช็คสถานะร้องเรียน
+                        </p>
+                        <button id="btnStatus" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#chkStatusModal">ติดตามสถานะ</button>
+                    </div>
+                <?php } ?>
                 <div class="px-5 p-md-0">
 
                     <h5 class="text-nowrap">
@@ -62,33 +55,36 @@ $user = mysqli_fetch_assoc($result);
 
                     </p>
 
-                    <button id="btnBug" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#bugModal">แจ้งปัญหา</button>
-
+                    <button id="btnBug" class="btn btn-danger disabled" data-bs-toggle="modal" data-bs-target="#bugModal">แจ้งปัญหา</button>
                 </div>
-
             </div>
-
-
-
-            <div class="d-none d-sm-none d-md-block">
-
+            <?php if ($_SESSION['id']) { ?>
                 <hr class="border border-2">
-
-                <div class="text-center mb-3">
-
-                    <h5 class="mb-3">
-
-                        ระบบสมาชิก
-
-                    </h5>
-
-                    <a href="?p=sign-in" class="btn btn-outline-light login-hover">เข้าสู่ระบบ</a>
-
-                    <a href="?p=sign-up" class="btn btn-outline-light login-hover">สมัครสมาชิก</a>
-
+                <div class="p-5 mb-3 d-none d-md-block text-center">
+                    <a href="?account" class="btn btn-outline-light login-hover">ย้อนกลับ <i class="fa-solid fa-arrow-left"></i></a>
                 </div>
+            <?php } ?>
 
-            </div>
+
+
+            <?php if (!$_SESSION['id']) { ?>
+                <div class="d-none d-sm-none d-md-block">
+
+                    <hr class="border border-2">
+
+                    <div class="text-center mb-3">
+
+                        <h5 class="mb-3">
+
+                            ระบบสมาชิก
+
+                        </h5>
+
+                        <a href="?p=sign-in" class="btn btn-outline-light login-hover">เข้าสู่ระบบ</a>
+                        <a href="?p=sign-up" class="btn btn-outline-light login-hover">สมัครสมาชิก</a>
+                    </div>
+                </div>
+            <?php } ?>
 
         </div>
         <div class="col-12 col-md-4 d-block d-md-none bg-dark rounded p-3 p-md-5 text-light">
@@ -121,7 +117,7 @@ $user = mysqli_fetch_assoc($result);
 
                     </p>
 
-                    <button id="btnStatus" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#chkStatusModal">ติดตามสถานะ</button>
+                    <button id="btnStatus" class="btn btn-warning disabled" data-bs-toggle="modal" data-bs-target="#chkStatusModal">ติดตามสถานะ</button>
 
                 </div>
 
@@ -139,7 +135,7 @@ $user = mysqli_fetch_assoc($result);
 
                     </p>
 
-                    <button id="btnBug" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#bugModal">แจ้งปัญหา</button>
+                    <button id="btnBug" class="btn btn-danger disabled" data-bs-toggle="modal" data-bs-target="#bugModal">แจ้งปัญหา</button>
 
                 </div>
 
@@ -186,13 +182,17 @@ $user = mysqli_fetch_assoc($result);
                     <div class="form-floating col-12 col-md-6 mb-3 mb-md-0">
                         <input type="text" class="form-control" id="inputFname" name="inputFname" placeholder="กรอกชื่อจริง" value="<?php if (isset($_GET['fname'])) {
                                                                                                                                         echo $_GET['fname'];
-                                                                                                                                    }elseif ($user['u_fname']) { echo $user['u_fname']; } ?>">
+                                                                                                                                    } elseif ($user['u_fname']) {
+                                                                                                                                        echo $user['u_fname'];
+                                                                                                                                    } ?>">
                         <label for="inputFname">ชื่อจริง</label>
                     </div>
                     <div class="form-floating col-12 col-md-6 mb-3 mb-md-0">
                         <input type="text" class="form-control" id="inputLname" name="inputLname" placeholder="กรอกนามสกุล" value="<?php if (isset($_GET['lname'])) {
                                                                                                                                         echo $_GET['lname'];
-                                                                                                                                    }elseif ($user['u_lname']) { echo $user['u_lname']; } ?>">
+                                                                                                                                    } elseif ($user['u_lname']) {
+                                                                                                                                        echo $user['u_lname'];
+                                                                                                                                    } ?>">
                         <label for="inputLname">นามสกุล</label>
                     </div>
                 </div>
@@ -201,13 +201,17 @@ $user = mysqli_fetch_assoc($result);
                     <div class="form-floating col-12 col-md-6 mb-3 mb-md-0">
                         <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="กรอกอีเมลล์" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" value="<?php if (isset($_GET['email'])) {
                                                                                                                                                                                             echo $_GET['email'];
-                                                                                                                                                                                        }elseif ($user['u_email']) { echo $user['u_email']; } ?>">
+                                                                                                                                                                                        } elseif ($user['u_email']) {
+                                                                                                                                                                                            echo $user['u_email'];
+                                                                                                                                                                                        } ?>">
                         <label for="inputEmail">อีเมลล์</label>
                     </div>
                     <div class="form-floating col-12 col-md-6 mb-3 mb-md-0">
                         <input type="tel" class="form-control" id="inputTel" name="inputTel" placeholder="กรอกเบอร์โทรศัพท์" pattern="[0-9]{10}" value="<?php if (isset($_GET['tel'])) {
                                                                                                                                                             echo $_GET['tel'];
-                                                                                                                                                        } elseif ($user['u_tel']) { echo $user['u_tel']; } ?>">
+                                                                                                                                                        } elseif ($user['u_tel']) {
+                                                                                                                                                            echo $user['u_tel'];
+                                                                                                                                                        } ?>">
                         <label for="inputTel">เบอร์โทรศัพท์</label>
                     </div>
                 </div>

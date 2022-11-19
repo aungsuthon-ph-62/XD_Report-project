@@ -12,6 +12,9 @@ if (isset($_POST['action'])) {
     } elseif ($_POST['action'] == 'signUp') {
         signUp();
         exit;
+    } elseif ($_POST['action'] == 'editReport') {
+        editReport();
+        exit;
     }
 }
 
@@ -45,6 +48,45 @@ function submitReport()
                     if (!empty($tel)) {
                         if (!empty($topic)) {
                             if (!empty($text)) {
+                                if ($chkImg) {
+                                    foreach ($_FILES['image']['name'] as $key => $val) {
+                                        $rand = rand('1111111', '9999999');
+                                        $file = $rand . '_' . $val;
+                                        $imgMove = move_uploaded_file($_FILES['image']['tmp_name'][$key], '../img/upload/' . $file);
+                                        if ($imgMove) {
+                                            $img_q = "INSERT INTO img_tbl (report_ref, img_file, create_at) VALUES ('$imgRef', '$file', '$date')";
+                                            $img_r =  mysqli_query($conn, $img_q);
+                                            if ($img_r) {
+                                                $query = "INSERT INTO report_tbl (report_img_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
+                            VALUES ('$imgRef', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
+                                                $result_query =  mysqli_query($conn, $query);
+                                                if ($result_query) {
+                                                    $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
+                                                    header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
+                                                } else {
+                                                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                    header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&?$data");
+                                                }
+                                            } else {
+                                                $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                header('location: ../index.php?$data');
+                                            }
+                                        } else {
+                                            $query = "INSERT INTO report_tbl (report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
+            VALUES ('$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
+                                            $result_query =  mysqli_query($conn, $query);
+                                            if ($result_query) {
+                                                $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
+                                                header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
+                                                exit;
+                                            } else {
+                                                $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&?$data");
+                                                exit;
+                                            }
+                                        }
+                                    }
+                                }
                             } else {
                                 $_SESSION['error'] = "กรุณากรอกข้อมูลร้องเรียน!";
                                 header("Location: ../index.php?$data");
@@ -76,52 +118,7 @@ function submitReport()
             exit;
         }
 
-        $query = "INSERT INTO report_tbl (report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
-            VALUES ('$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
-        $result_query =  mysqli_query($conn, $query);
-        if ($result_query) {
-            $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
-            header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
-            exit;
-        } else {
-            $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-            header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&?$data");
-            exit;
-        }
-        if ($chkImg) {
-            foreach ($_FILES['image']['name'] as $key => $val) {
-                $rand = rand('1111111', '9999999');
-                $file = $rand . '_' . $val;
-                $imgMove = move_uploaded_file($_FILES['image']['tmp_name'][$key], '../img/upload/' . $file);
-                if ($imgMove) {
-                    $img_q = "INSERT INTO img_tbl (report_ref, img_file, create_at) VALUES ('$imgRef', '$file', '$date')";
-                    $img_r =  mysqli_query($conn, $img_q);
-                } else {
-                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                    header('location: ../index.php??$data');
-                    exit;
-                }
-            }
-            // out of loop
-            if ($img_r) {
-                $query = "INSERT INTO report_tbl (report_img_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
-                    VALUES ('$imgRef', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
-                $result_query =  mysqli_query($conn, $query);
-                if ($result_query) {
-                    $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
-                    header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
-                    exit;
-                } else {
-                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                    header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&?$data");
-                    exit;
-                }
-            } else {
-                $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                header('location: ../index.php?$data');
-                exit;
-            }
-        }
+
         // no ID
     } else {
         if (!$checkbox) {
@@ -136,6 +133,48 @@ function submitReport()
                         if (!empty($tel)) {
                             if (!empty($topic)) {
                                 if (!empty($text)) {
+
+                                    if ($chkImg) {
+                                        foreach ($_FILES['image']['name'] as $key => $val) {
+                                            $rand = rand('1111111', '9999999');
+                                            $file = $rand . '_' . $val;
+                                            $imgMove = move_uploaded_file($_FILES['image']['tmp_name'][$key], '../img/upload/' . $file);
+                                            if ($imgMove) {
+                                                $img_q = "INSERT INTO img_tbl (report_ref, img_file, create_at) VALUES ('$imgRef', '$file', '$date')";
+                                                $img_r =  mysqli_query($conn, $img_q);
+                                                if ($img_r) {
+                                                    $query = "INSERT INTO report_tbl (report_user_ref, report_img_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
+                                                    VALUES ('$id', '$imgRef', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
+                                                    $result_query =  mysqli_query($conn, $query);
+                                                    if ($result_query) {
+                                                        $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
+                                                        header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
+                                                        exit;
+                                                    } else {
+                                                        $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                        header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&$data");
+                                                        exit;
+                                                    }
+                                                } else {
+                                                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                    header('location: ../index.php?$data');
+                                                }
+                                            } else {
+                                                $query = "INSERT INTO report_tbl (report_user_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
+                                                VALUES ('$id', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
+                                                $result_query =  mysqli_query($conn, $query);
+                                                if ($result_query) {
+                                                    $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
+                                                    header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
+                                                    exit;
+                                                } else {
+                                                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
+                                                    header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&$data");
+                                                    exit;
+                                                }
+                                            }
+                                        }
+                                    }
                                 } else {
                                     $_SESSION['error'] = "กรุณากรอกข้อมูลร้องเรียน!";
                                     header("Location: ../index.php?$data");
@@ -165,54 +204,6 @@ function submitReport()
                 $_SESSION['error'] = "กรุณากรอกชื่อจริง!";
                 header("Location: ../index.php?$data");
                 exit;
-            }
-
-            if (!$chkImg) {
-                $query = "INSERT INTO report_tbl (report_user_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
-                VALUES ('$id', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
-                $result_query =  mysqli_query($conn, $query);
-                if ($result_query) {
-                    $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
-                    header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
-                    exit;
-                } else {
-                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                    header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&$data");
-                    exit;
-                }
-            } else {
-                foreach ($_FILES['image']['name'] as $key => $val) {
-                    $rand = rand('1111111', '9999999');
-                    $file = $rand . '_' . $val;
-                    $imgMove = move_uploaded_file($_FILES['image']['tmp_name'][$key], '../img/upload/' . $file);
-                    if ($imgMove) {
-                        $img_q = "INSERT INTO img_tbl (report_ref, img_file, create_at) VALUES ('$imgRef', '$file', '$date')";
-                        $img_r =  mysqli_query($conn, $img_q);
-                    } else {
-                        $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                        header('location: ../index.php?$data');
-                        exit;
-                    }
-                }
-                // out of loop
-                if ($img_r) {
-                    $query = "INSERT INTO report_tbl (report_user_ref, report_img_ref, report_email, report_tel, report_fname, report_lname, report_topic, report_text, report_create_at, report_status) 
-                    VALUES ('$id', '$imgRef', '$email', '$tel', '$fname', '$lname', '$topic', '$text', '$date', 'รอตรวจสอบ')";
-                    $result_query =  mysqli_query($conn, $query);
-                    if ($result_query) {
-                        $_SESSION['success'] = "ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ";
-                        header('location: ../index.php?success=ส่งคำร้องสำเร็จ! กรุณารอการตรวจสอบ');
-                        exit;
-                    } else {
-                        $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                        header("location: ../index.php?error=เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง&$data");
-                        exit;
-                    }
-                } else {
-                    $_SESSION['error'] = "เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง";
-                    header('location: ../index.php?$data');
-                    exit;
-                }
             }
             // has ID
         }
@@ -317,6 +308,7 @@ function signIn()
 
             if ($result > 0) {
                 $_SESSION['id'] = $result['id'];
+                $_SESSION['role'] = $result['u_role'];
                 $_SESSION['success'] = "เข้าสู่ระบบสำเร็จ!";
                 header('location: ../index.php?p=account');
                 exit;
@@ -331,16 +323,75 @@ function signIn()
 
 // Log out
 if (isset($_GET['logout'])) {
-    if (!$_SESSION['id']) {
-        header("Location: ../index.php?error=กรุณาเข้าสู่ระบบก่อน!");
-        exit;
-    } else {
-        $_SESSION['success'] = "ออกจากระบบสำเร็จ!";
-        header("Location: ../index.php?success=ออกจากระบบสำเร็จ!");
-        session_unset();
-        session_destroy();
+    $_SESSION['success'] = "ออกจากระบบสำเร็จ!";
+    header("Location: ../index.php");
+    session_unset();
+    session_destroy();
+    exit;
+}
+
+// count Users
+function countUsers($conn)
+{
+    global $conn;
+
+    $countQuery = "SELECT COUNT(id) AS cID FROM user_tbl";
+    $countResult = mysqli_query($conn, $countQuery);
+    $countUser = mysqli_fetch_assoc($countResult);
+    return $countUser;
+}
+
+// count Check status
+function countCheckStatus($conn)
+{
+    global $conn;
+
+    $countQuery = "SELECT COUNT(id) AS cID FROM report_tbl WHERE report_status = 'รอตรวจสอบ'";
+    $countResult = mysqli_query($conn, $countQuery);
+    $countUser = mysqli_fetch_assoc($countResult);
+    return $countUser;
+}
+
+// count Checked status
+function countCheckedStatus($conn)
+{
+    global $conn;
+
+    $countQuery = "SELECT COUNT(id) AS cID FROM report_tbl WHERE report_status = 'รับเรื่องแล้ว'";
+    $countResult = mysqli_query($conn, $countQuery);
+    $countUser = mysqli_fetch_assoc($countResult);
+    return $countUser;
+}
+
+// Y-m-d to Thai date
+function DateThai($strDate)
+{
+    $strYear = date("Y", strtotime($strDate)) + 543;
+    $strMonth = date("n", strtotime($strDate));
+    $strDay = date("j", strtotime($strDate));
+    $strHour = date("H", strtotime($strDate));
+    $strMinute = date("i", strtotime($strDate));
+    $strSeconds = date("s", strtotime($strDate));
+    $strMonthCut = array("", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.");
+    $strMonthThai = $strMonthCut[$strMonth];
+    return "$strDay $strMonthThai $strYear";
+}
+
+// update report status
+function editReport()
+{
+    global $conn;
+    date_default_timezone_set('Asia/Bangkok');
+    $date = date("Y-m-d H:i:s");
+    $id = $_POST['id'];
+    $status = $_POST['selectStatus'];
+
+    $updateQuery = "UPDATE report_tbl SET report_status='$status', report_update_at='$date' WHERE id='$id'";
+    $updateResult = mysqli_query($conn, $updateQuery);
+
+    if ($updateResult) {
+        $_SESSION['success'] = "อัพเดตข้อมูลสำเร็จ!";
+        header("Location: ../index.php?p=account");
         exit;
     }
 }
-
-// fetch user report data
